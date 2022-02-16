@@ -1,0 +1,1 @@
+package com.myretail.webservices.restservices.model;
