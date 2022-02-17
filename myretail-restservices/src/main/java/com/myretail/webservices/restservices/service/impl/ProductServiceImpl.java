@@ -50,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
 		try {
 			productDetailsDocument = productDetailsRepository.findById(productId).get();
 			if (productDetailsDocument != null) {
+				log.info("Found product details. Mapping to response");
 				response = myRetailServiceHelper.prepareGetProductResponse(productDetailsDocument);
 				responseString = objectMapper.writeValueAsString(response);
 			}
@@ -70,17 +71,25 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public String createProductDetailsService(Product product) {
 
+		log.info("Create Product details start");
+
 		ProductDetailsDocument productDetailsDocument = null;
 		Product response = null;
 		String responseString = null;
+		Integer sequenceId = null;
 		try {
+			log.info("Preparing product document");
 			productDetailsDocument = myRetailServiceHelper.prepareProductDocument(product);
 			if (product.getProductId() != null) {
+				log.info("Product Id received in request. Updating product");
 				productDetailsDocument.setId(product.getProductId());
 			} else {
-				productDetailsDocument.setId(sequenceGenerator.getSequenceNumber(ProductDetailsDocument.SEQUENCE_NAME));
-
+				log.info("Product Id not received in request. Creating product");
+				sequenceId = sequenceGenerator.getSequenceNumber(ProductDetailsDocument.SEQUENCE_NAME);
+				log.info("Sequence Id generated = {}", sequenceId);
+				productDetailsDocument.setId(sequenceId);
 			}
+			log.info("Saving product to db");
 			productDetailsDocument = productDetailsRepository.save(productDetailsDocument);
 			if (productDetailsDocument != null) {
 				response = myRetailServiceHelper.prepareGetProductResponse(productDetailsDocument);
