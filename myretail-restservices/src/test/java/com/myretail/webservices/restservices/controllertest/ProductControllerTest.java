@@ -1,9 +1,9 @@
 package com.myretail.webservices.restservices.controllertest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.BDDMockito.given;
-
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.myretail.webservices.restservices.controller.ProductController;
 import com.myretail.webservices.restservices.exception.ResourceNotFoundException;
+import com.myretail.webservices.restservices.helper.MyRetailServiceHelper;
 import com.myretail.webservices.restservices.service.ProductService;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,6 +24,9 @@ public class ProductControllerTest {
 
 	@Mock
 	ProductService productService;
+
+	@Mock
+	MyRetailServiceHelper helper;
 
 	@InjectMocks
 	ProductController productController;
@@ -55,6 +59,12 @@ public class ProductControllerTest {
 	@Test
 	void createProductTest() throws Exception {
 
-	}
+		String product = "{\"productName\":\"Test Product\",\"priceDetails\":{\"price\":100,\"currency\":\"INR\"},\"description\":\"Test Product\"}";
 
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(productController).build();
+		mockMvc.perform(post("/api/products").contentType(MediaType.APPLICATION_JSON_VALUE).content(product))
+				.andExpect(status().isCreated());
+
+	}
+	
 }
